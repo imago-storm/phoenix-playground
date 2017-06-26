@@ -6,6 +6,11 @@ defmodule UserCreateAndLogin.UserController do
   alias UserCreateAndLogin.User
   alias UserCreateAndLogin.Authenticator
 
+  plug Guardian.Plug.EnsureAuthenticated,
+    handler: UserCreateAndLogin.GuardianAuthErrorHandler
+  plug Guardian.Plug.EnsureResource,
+    handler: UserCreateAndLogin.GuardianAuthErrorHandler
+
   def index(conn, _params) do
     users = Repo.all(User)
     render(conn, "index.json", users: users)
@@ -31,9 +36,6 @@ defmodule UserCreateAndLogin.UserController do
     end
   end
 
-  # plug :authenticate, :client
-  plug UserCreateAndLogin.Plugs.Authenticate
-
   def show(conn, %{"id" => id}) do
     user = Repo.get!(User, id)
     Logger.debug(inspect conn)
@@ -41,9 +43,8 @@ defmodule UserCreateAndLogin.UserController do
   end
 
   def profile(conn, _params) do
-    Logger.debug(inspect conn.assigns)
-    user_id = conn.assigns.user_id
-    user = Repo.get!(User, user_id)
+    # Logger.debug(inspect conn)
+    user = Guardian.Plug.current_resource(conn)
     render(conn, "show.json", user: user)
   end
 

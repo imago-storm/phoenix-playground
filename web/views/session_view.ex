@@ -15,6 +15,6 @@ defmodule UserCreateAndLogin.SessionView do
   end
 
   def render("login.json", %{user: user, jwt: jwt, exp: exp}) do
-    %{ user_id: user.id, expires: exp }
+    %{ user_id: user.id, expires: exp, jwt: jwt }
   end
 end

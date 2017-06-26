@@ -4,7 +4,8 @@ defmodule UserCreateAndLogin.OrderController do
 
   alias UserCreateAndLogin.Order
 
-  plug Guardian.Plug.EnsureResource, handler: UserCreateAndLogin.GuardianAuthErrorHandler
+  plug Guardian.Plug.EnsureAuthenticated,
+    handler: UserCreateAndLogin.GuardianAuthErrorHandler
 
   def index(conn, _params) do
     orders = Repo.all(Order)

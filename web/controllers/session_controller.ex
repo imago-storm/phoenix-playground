@@ -10,38 +10,6 @@ defmodule UserCreateAndLogin.SessionController do
     render(conn, "index.json", sessions: sessions)
   end
 
-  def create(conn, _params) do
-    Logger.debug(inspect(conn.body_params))
-    body_params = conn.body_params
-    email = body_params["email"]
-    password = body_params["password"]
-
-    user = Repo.get_by!(User, email: email)
-    Logger.debug(inspect(user))
-
-    if user.password == password do
-      changeset = Session.changeset(%Session{}, %{"user_id" => user.id})
-      Logger.debug "Changeset #{inspect changeset}"
-      case Repo.insert(changeset) do
-        {:ok, session} ->
-          Logger.debug inspect session
-          conn
-          |> put_status(:created)
-          # |> put_resp_header("location", session_path(conn, :show, session))
-          |> render("show.json", session: session)
-        {:error, changeset} ->
-          conn
-          |> put_status(:unprocessable_entity)
-          |> render(UserCreateAndLogin.ChangesetView, "error.json", changeset: changeset)
-      end
-    else
-      Logger.debug("false")
-      conn
-      |> put_status(:forbidden)
-      |> render(UserCreateAndLogin.ErrorView, "403.json")
-    end
-
-  end
 
   def login(conn, params) do
     case User.find_and_confirm_password(params) do
