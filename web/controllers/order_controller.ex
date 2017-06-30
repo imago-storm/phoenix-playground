@@ -8,11 +8,12 @@ defmodule UserCreateAndLogin.OrderController do
     handler: UserCreateAndLogin.GuardianAuthErrorHandler
 
   def index(conn, _params) do
-    orders = Repo.all(Order)
+    user = Guardian.Plug.current_resource(conn)
+    orders = Repo.all(Order, user_id: user.id)
     render(conn, "index.json", orders: orders)
   end
 
-  def create(conn, %{"order" => order_params}) do
+  def create(conn, order_params) do
     changeset = Order.changeset(%Order{}, order_params)
 
     case Repo.insert(changeset) do

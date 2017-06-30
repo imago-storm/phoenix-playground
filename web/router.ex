@@ -29,6 +29,7 @@ defmodule UserCreateAndLogin.Router do
     post "/login", SessionController, :login
     get "/profile", UserController, :profile
     resources "/orders", OrderController, except: [:new, :edit]
+    post "/users/registration", SessionController, :registration
   end
 
   # Other scopes may use custom stacks.

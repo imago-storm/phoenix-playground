@@ -18,6 +18,7 @@ defmodule UserCreateAndLogin.User do
     struct
     |> cast(params, [:email, :password])
     |> validate_required([:email, :password])
+    |> unique_constraint(:email, [name: "users_email_index", message: "The email was already taken"])
   end
 
   def find_and_confirm_password(params) do
