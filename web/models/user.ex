@@ -1,8 +1,12 @@
 defmodule UserCreateAndLogin.User do
+
+
   use UserCreateAndLogin.Web, :model
   alias UserCreateAndLogin.Repo
   require Logger
 
+  @primary_key {:guid, :binary_id, autogenerate: true}
+  @derive {Phoenix.Param, key: :guid}
 
   schema "users" do
     field :email, :string

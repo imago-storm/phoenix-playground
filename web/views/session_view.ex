@@ -11,14 +11,14 @@ defmodule UserCreateAndLogin.SessionView do
 
   def render("session.json", %{session: session}) do
     %{id: session.id,
-      user_id: session.user_id}
+      user_id: session.user_guid}
   end
 
   def render("login.json", %{user: user, jwt: jwt, exp: exp}) do
-    %{ user_id: user.id, expires: exp, jwt: jwt }
+    %{ user_id: user.guid, expires: exp, jwt: jwt }
   end
 
   def render("new_user.json", %{user: user}) do
-    %{id: user.id}
+    %{id: user.guid}
   end
 end

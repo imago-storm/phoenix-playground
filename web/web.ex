@@ -1,4 +1,8 @@
 defmodule UserCreateAndLogin.Web do
+
+  @primary_key {:guid, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+
   @moduledoc """
   A module that keeps using definitions for controllers,
   views and so on.
@@ -78,4 +82,6 @@ defmodule UserCreateAndLogin.Web do
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
   end
+
+
 end
