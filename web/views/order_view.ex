@@ -10,7 +10,7 @@ defmodule UserCreateAndLogin.OrderView do
   end
 
   def render("order.json", %{order: order}) do
-    %{id: order.id,
+    %{id: order.guid,
       date: order.date,
       persons: order.persons,
       confirmed: order.confirmed}

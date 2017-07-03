@@ -1,6 +1,7 @@
 defmodule UserCreateAndLogin.Repo.Migrations.AddUserGuidToSessions do
   use Ecto.Migration
 
+
   def change do
 
     alter table(:sessions) do

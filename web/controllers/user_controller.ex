@@ -6,10 +6,10 @@ defmodule UserCreateAndLogin.UserController do
   alias UserCreateAndLogin.User
   alias UserCreateAndLogin.Authenticator
 
-  plug Guardian.Plug.EnsureAuthenticated,
-    handler: UserCreateAndLogin.GuardianAuthErrorHandler
-  plug Guardian.Plug.EnsureResource,
-    handler: UserCreateAndLogin.GuardianAuthErrorHandler
+  # plug Guardian.Plug.EnsureAuthenticated,
+  #   handler: UserCreateAndLogin.GuardianAuthErrorHandler
+  # plug Guardian.Plug.EnsureResource,
+  #   handler: UserCreateAndLogin.GuardianAuthErrorHandler
 
   def index(conn, _params) do
     users = Repo.all(User)
@@ -52,31 +52,5 @@ defmodule UserCreateAndLogin.UserController do
     send_resp(conn, :no_content, "")
   end
 
-
-  defp authenticate(conn, :client) do
-    do_auth(conn, action_name(conn))
-  end
-
-  defp do_auth(conn, action) when action in [:show, :delete, :profile] do
-    headers = conn.req_headers
-    {"x-session-id", session_id} = Enum.find(headers, fn(element) ->
-      match?({"x-session-id", _}, element)
-    end)
-
-    case Authenticator.find_session(session_id) do
-      {:ok, session} ->
-        conn
-        # |> put_session(:user_id, session.user_id)
-        # |> configure_session(renew: true)
-        |> assign(:user_id, session.user_id)
-      {:error} ->
-        Logger.debug ("auth failed")
-        conn
-        |> put_status(:forbidden)
-        |> render(UserCreateAndLogin.ErrorView, "403.json")
-    end
-  end
-
-  defp do_auth(conn, _action), do: conn
 
 end

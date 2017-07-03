@@ -15,6 +15,11 @@ defmodule UserCreateAndLogin.Router do
     plug Guardian.Plug.LoadResource
   end
 
+  pipeline :require_login_api do
+    plug Guardian.Plug.EnsureAuthenticated, handler: UserCreateAndLogin.GuardianAuthErrorHandler
+  end
+
+
   scope "/", UserCreateAndLogin do
     pipe_through :browser # Use the default browser stack
 
@@ -23,13 +28,19 @@ defmodule UserCreateAndLogin.Router do
   end
 
   scope "/api", UserCreateAndLogin do
-    pipe_through :api
+    pipe_through [:api, :require_login_api]
     resources "/users", UserController, except: [:new, :edit]
     # resources "/sessions", SessionController, except: [:new, :edit]
-    post "/login", SessionController, :login
     get "/profile", UserController, :profile
     resources "/orders", OrderController, except: [:new, :edit]
     post "/users/registration", SessionController, :registration
+  end
+
+  scope "/api", UserCreateAndLogin do
+    pipe_through :api
+
+    post "/users/registration", SessionController, :registration
+    post "/login", SessionController, :login
   end
 
   # Other scopes may use custom stacks.

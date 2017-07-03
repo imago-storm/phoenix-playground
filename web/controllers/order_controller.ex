@@ -3,18 +3,27 @@ defmodule UserCreateAndLogin.OrderController do
   require Logger
 
   alias UserCreateAndLogin.Order
+  alias UserCreateAndLogin.User
 
-  plug Guardian.Plug.EnsureAuthenticated,
-    handler: UserCreateAndLogin.GuardianAuthErrorHandler
+  # plug Guardian.Plug.EnsureAuthenticated,
+  #   handler: UserCreateAndLogin.GuardianAuthErrorHandler
 
   def index(conn, _params) do
     user = Guardian.Plug.current_resource(conn)
-    orders = Repo.all(Order, user_id: user.id)
+    user_guid = user.guid
+
+    orders = Order
+    |> Ecto.Query.where(user_guid: ^user_guid)
+    |> Repo.all
+
     render(conn, "index.json", orders: orders)
   end
 
   def create(conn, order_params) do
-    changeset = Order.changeset(%Order{}, order_params)
+    user = Guardian.Plug.current_resource(conn)
+    order_params_with_user = Map.put(order_params, "user_guid", user.guid)
+    Logger.debug(inspect order_params_with_user)
+    changeset = Order.changeset(%Order{}, order_params_with_user)
 
     case Repo.insert(changeset) do
       {:ok, order} ->
