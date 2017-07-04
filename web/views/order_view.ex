@@ -15,4 +15,11 @@ defmodule UserCreateAndLogin.OrderView do
       persons: order.persons,
       confirmed: order.confirmed}
   end
+
+  def render("confirmed.json", %{order: order}) do
+    %{
+      id: order.guid,
+      confirmed: true
+    }
+  end
 end

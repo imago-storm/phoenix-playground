@@ -34,6 +34,7 @@ defmodule UserCreateAndLogin.Router do
     get "/profile", UserController, :profile
     resources "/orders", OrderController, except: [:new, :edit]
     post "/users/registration", SessionController, :registration
+    post "/orders/:id/confirm", OrderController, :confirm
   end
 
   scope "/api", UserCreateAndLogin do

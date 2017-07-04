@@ -1,6 +1,7 @@
 defmodule UserCreateAndLogin.UserController do
   require Logger
   use UserCreateAndLogin.Web, :controller
+  use Guardian.Phoenix.Controller
   import Plug.Conn
 
   alias UserCreateAndLogin.User
@@ -22,8 +23,8 @@ defmodule UserCreateAndLogin.UserController do
     render(conn, "show.json", user: user)
   end
 
-  def profile(conn, _params) do
-    # Logger.debug(inspect conn)
+  def profile(conn, _params, user, {:ok, claims}) do
+    Logger.debug(inspect claims)
     user = Guardian.Plug.current_resource(conn)
     render(conn, "show.json", user: user)
   end

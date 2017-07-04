@@ -1,5 +1,6 @@
 defmodule UserCreateAndLogin.OrderController do
   use UserCreateAndLogin.Web, :controller
+  use Guardian.Phoenix.Controller
   require Logger
 
   alias UserCreateAndLogin.Order
@@ -55,6 +56,23 @@ defmodule UserCreateAndLogin.OrderController do
         |> put_status(:unprocessable_entity)
         |> render(UserCreateAndLogin.ChangesetView, "error.json", changeset: changeset)
     end
+  end
+
+  def confirm(conn, %{"id" => id}, user, {:ok, claims}) do
+    permissions = Guardian.Permissions.from_claims(claims)
+    available = Guardian.Permissions.any?(permissions, [:confirm_order], :admin)
+
+    if available do
+      order = Repo.get!(Order, id)
+      conn
+      |> put_status(200)
+      |> render("confirmed.json", order: order)
+    else
+      conn
+      |> put_status(:forbidden)
+      |> render(UserCreateAndLogin.ErrorView, "403.json")
+    end
+
   end
 
   def delete(conn, %{"id" => id}) do

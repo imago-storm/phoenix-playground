@@ -30,13 +30,22 @@ defmodule UserCreateAndLogin.SessionController do
   def login(conn, params) do
     case User.find_and_confirm_password(params) do
       {:ok, user} ->
-        new_conn = Guardian.Plug.api_sign_in(conn, user)
+        new_conn = Guardian.Plug.api_sign_in(
+          conn,
+          user,
+          :token,
+          perms: %{ default: [:read_profile, :write_profile, :create_order]}
+        )
 
         jwt = Guardian.Plug.current_token(new_conn)
 
         case Guardian.Plug.claims(new_conn) do
           {:ok, claims} ->
             exp = Map.get(claims, "exp")
+
+            Logger.debug(inspect(claims))
+
+            Logger.debug(inspect Guardian.Permissions.from_claims(claims))
 
             new_conn
               |> put_resp_header("authorization", "Bearer #{jwt}")
@@ -57,6 +66,10 @@ defmodule UserCreateAndLogin.SessionController do
         |> put_status(:forbidden)
         |> render(UserCreateAndLogin.ErrorView, "403.json")
     end
+  end
+
+  def login_admin(conn, params) do
+
   end
 
   def show(conn, %{"id" => id}) do

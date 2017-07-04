@@ -31,7 +31,18 @@ config :guardian, Guardian,
     allowed_drift: 2000,
     verify_issuer: true,
     secret_key: "eHa1vCxmO4bJLm0Lk5djDcF/1UMQAcuYUgoijYeAje20b0OHqkdBdn6riR4ReVEM",
-    serializer: UserCreateAndLogin.GuardianSerializer
+    serializer: UserCreateAndLogin.GuardianSerializer,
+    permissions: %{
+      default: [
+        :read_profile,
+        :write_profile,
+        :create_order,
+        :delete_order
+      ],
+      admin: [
+        :confirm_order
+      ]
+    }
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
